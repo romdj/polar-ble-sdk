@@ -39,7 +39,6 @@ class AtomicList<T> {
     }
     
     func size() -> Int {
-        var s: Int
         lock.lock()
         defer {
             lock.unlock()
@@ -51,14 +50,6 @@ class AtomicList<T> {
         var item: T
         lock.lock()
         item = items.removeFirst()
-        lock.unlock()
-        return item
-    }
-    
-    func peek() -> T! {
-        var item: T
-        lock.lock()
-        item = items.first!
         lock.unlock()
         return item
     }
@@ -75,14 +66,6 @@ class AtomicList<T> {
         lock.unlock()
     }
     
-    func accessAll(_ f: (_ item: T) -> Void){
-        lock.lock()
-        for it in items {
-            f(it)
-        }
-        lock.unlock()
-    }
-    
     func fetch(_ f: (_ item: T) -> Bool ) -> T? {
         lock.lock()
         let object = items.filter { (object: T) -> Bool in
@@ -90,16 +73,6 @@ class AtomicList<T> {
         }.first
         lock.unlock()
         return object
-    }
-    
-    func fetch(_ index: Int) -> T? {
-        lock.lock()
-        if index >= 0 && index < items.count {
-            lock.unlock()
-            return items[index]
-        }
-        lock.unlock()
-        return nil
     }
     
     func removeIf(_ f: (_ item: T) -> Bool ) -> Int {

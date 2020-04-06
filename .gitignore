@@ -1,7 +1,7 @@
 .DS_Store
 *.iml
-demos/**/libs/
 build
+demos/**/libs/
 .gradle
 gradle
 gradlew
