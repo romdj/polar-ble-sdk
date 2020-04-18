@@ -12,7 +12,6 @@ import android.widget.Button;
 
 import org.reactivestreams.Publisher;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
@@ -511,7 +510,7 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("CheckResult")
             @Override
             public void onClick(View view) {
-                api.startRecording(DEVICE_ID,"TEST_APP_ID", PolarBleApi.RecordingInterval.INTERVAL_1S, PolarBleApi.SampleType.RR).subscribe(
+                api.startRecording(DEVICE_ID,"TEST_APP_ID", PolarBleApi.RecordingInterval.INTERVAL_1S, PolarBleApi.SampleType.HR).subscribe(
                     new Action() {
                         @Override
                         public void run() throws Exception {

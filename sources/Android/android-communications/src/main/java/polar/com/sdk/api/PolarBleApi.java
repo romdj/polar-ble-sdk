@@ -1,12 +1,12 @@
 // Copyright © 2019 Polar Electro Oy. All rights reserved.
 package polar.com.sdk.api;
 
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 import android.util.Pair;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -102,6 +102,13 @@ public abstract class PolarBleApi {
     protected PolarBleApi(final int features) {
         this.features = features;
     }
+
+    /**
+     * set mtu to lower than default(232 is the default for polar devices, minimum for H10 is 70 and for OH1 is 140)
+     * to minimize latency
+     * @param mtu value between 64-512 to be set
+     */
+    public abstract void setMtu(@IntRange(from = 70, to = 512) int mtu);
 
     /**
      * Must be called when application is destroyed.
