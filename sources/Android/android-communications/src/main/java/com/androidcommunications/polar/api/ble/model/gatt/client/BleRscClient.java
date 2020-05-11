@@ -1,5 +1,7 @@
 package com.androidcommunications.polar.api.ble.model.gatt.client;
 
+import android.support.annotation.NonNull;
+
 import com.androidcommunications.polar.api.ble.BleLogger;
 import com.androidcommunications.polar.api.ble.model.gatt.BleGattBase;
 import com.androidcommunications.polar.api.ble.model.gatt.BleGattTxInterface;
@@ -8,9 +10,9 @@ import com.androidcommunications.polar.common.ble.RxUtils;
 
 import java.util.UUID;
 
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
-import io.reactivex.FlowableEmitter;
+import io.reactivex.rxjava3.core.Completable;
+import io.reactivex.rxjava3.core.Flowable;
+import io.reactivex.rxjava3.core.FlowableEmitter;
 
 public class BleRscClient extends BleGattBase {
 
@@ -68,8 +70,8 @@ public class BleRscClient extends BleGattBase {
                 final boolean TotalDistancePresent = (flags & 0x02) == 0x02;
                 final boolean Running              = (flags & 0x04) == 0x04;
 
-                final long Speed = (long)(data[index++] | (data[index++] << 8));
-                final long Cadence = (long)data[index++];
+                final long Speed = (data[index++] | (data[index++] << 8));
+                final long Cadence = data[index++];
 
                 long StrideLength = 0;
                 long TotalDistance = 0;
@@ -78,16 +80,11 @@ public class BleRscClient extends BleGattBase {
                     StrideLength = (data[index++] | (data[index++] << 8));
 
                 if(TotalDistancePresent)
-                    TotalDistance = (long)(data[index++] | (data[index++] << 8) | data[index++] << 16 | data[index++] << 24);
+                    TotalDistance = (data[index++] | (data[index++] << 8) | data[index++] << 16 | data[index] << 24);
 
                 final long finalStrideLength = StrideLength;
                 final long finalTotalDistance = TotalDistance;
-                RxUtils.emitNext(observers, new RxUtils.Emitter<FlowableEmitter<? super RscNotificationData>>() {
-                    @Override
-                    public void item(FlowableEmitter<? super RscNotificationData> object) {
-                        object.onNext(new RscNotificationData(StrideLenPresent,TotalDistancePresent,Running, Speed, Cadence, finalStrideLength, finalTotalDistance));
-                    }
-                });
+                RxUtils.emitNext(observers, object -> object.onNext(new RscNotificationData(StrideLenPresent,TotalDistancePresent,Running, Speed, Cadence, finalStrideLength, finalTotalDistance)));
             }else if(characteristic.equals(RSC_FEATURE)){
                 long feature = data[0] | data[1] << 8;
                 BleLogger.d(TAG, "RSC Feature Characteristic read: " + feature);
@@ -101,8 +98,7 @@ public class BleRscClient extends BleGattBase {
     }
 
     @Override
-    public String toString() {
-        // and so on
+    public @NonNull String toString() {
         return "RSC service ";
     }
 
